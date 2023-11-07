@@ -1,0 +1,70 @@
+version: '2'
+services:
+  scale-odoo:
+    image: odoo:16
+    depends_on:
+      - scale-odoo-db
+    networks:
+      - web
+    command: --
+    environment:
+    - HOST=scale-odoo-db
+    - USER=odoo
+    - PASSWORD=asdjkl123
+    - TZ=America/Argentina/Buenos_Aires
+    container_name: scale-odoo
+    tty: true #-it en docker run
+    labels:
+    - traefik.enable=true
+    - traefik.http.routers.scale-odoo.rule=Host(`scale.luisesp.cloud`)
+    #- traefik.http.routers.scale-odoo.entrypoints=web-secured
+    #- traefik.http.routers.scale-odoo.tls=true
+    #- traefik.http.routers.scale-odoo.tls.certresolver=lets-encrypt
+    - traefik.http.services.scale-odoo.loadbalancer.server.port=8069
+    volumes:
+    # - ./entrypoint.sh:/entrypoint.sh   # if you want to install additional Python packages, uncomment this line!
+      - ./addons:/mnt/extra-addons
+      - ./etc:/etc/odoo
+  scale-odoo-db:
+    image: postgres:15
+    user: root
+    container_name: scale-postgres
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD=asdjkl123
+      - POSTGRES_USER=odoo
+      - PGDATA=/var/lib/postgres/data/pgdata
+      - TZ=America/Argentina/Buenos_Aires
+    networks:
+      - web
+    volumes:
+      - scale-odoo-db-data:/var/lib/postgres/data/pgdata
+  scale-pgadmin:
+    image: dpage/pgadmin4
+    container_name: scale-pgadmin
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=luiesp27@gmail.com
+      - PGADMIN_DEFAULT_PASSWORD=asdjkl123
+    volumes:
+      - scale-pgadmin4-data:/var/lib/pgadmin
+    depends_on:
+      - scale-odoo-db
+    networks:
+      - web
+    restart: always
+    links:
+      - scale-odoo-db
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.scale-pgadmin.rule=Host(`scaledb.luisesp.cloud`)
+      - traefik.http.routers.scale-pgadmin.entrypoints=web-secured, web
+      #- traefik.http.routers.scale-pgadminl.tls=true
+      - traefik.http.services.scale-pgadmin.loadbalancer.server.port=80
+
+volumes:
+  scale-pgadmin4-data:
+  scale-odoo-db-data:
+      
+networks:
+  web:
+    external: true
