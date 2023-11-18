@@ -2,9 +2,10 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 {
-    'name': 'State',
+    'name': 'Scale',
     'version': '1.0',
     'category': 'Manufacturing',
+    'author': "Luis Espindola",
     'sequence': 27,
     'summary': 'Truck weighting module',
     'description': "",
