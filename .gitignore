@@ -1,2 +1,3 @@
 /etc/filestore
 .log
+etc/odoo-server.log

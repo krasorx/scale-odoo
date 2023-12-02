@@ -57,7 +57,7 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.scale-pgadmin.rule=Host(`scaledb.luisesp.cloud`)
-      - traefik.http.routers.scale-pgadmin.entrypoints=web-secured, web
+      #- traefik.http.routers.scale-pgadmin.entrypoints=web-secured, web
       #- traefik.http.routers.scale-pgadminl.tls=true
       - traefik.http.services.scale-pgadmin.loadbalancer.server.port=80
 
